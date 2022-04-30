@@ -1,0 +1,26 @@
+{
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "telegrambot",
+  "description": "\"# node_telegram_bot\"",
+  "version": "1.0.0",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tkddn2515/node_telegram_bot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tkddn2515/node_telegram_bot/issues"
+  },
+  "homepage": "https://github.com/tkddn2515/node_telegram_bot#readme",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "node-telegram-bot-api": "^0.57.0",
+    "nodemon": "^2.0.16",
+    "xlsx": "^0.18.5"
+  },
+  "type": "module"
+}
