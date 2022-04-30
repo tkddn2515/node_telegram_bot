@@ -27,3 +27,9 @@ ex)
 ```
 /foodlist
 ```
+
+### How to get Token
+1. Find BotFather on Telegram.
+2. If you don't have a bot or want to create a new one, enter /newbot.
+3. Enter your bot's name and get a token key! However, the name of the bot must end in bot.
+4. If you have created a bot, you can enter /mybots to view the token or edit the bot's information.
