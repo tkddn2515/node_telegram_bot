@@ -15,7 +15,7 @@ bot.onText(/\/echo (.+)/, (msg, match) => {
 	const chatId = msg.chat.id;
 	const resp = match[1];
 
-  if(resp.includes('찐찌버거') || resp.includes('도르마무') || resp.includes('돌마무')) {
+  if(resp.includes('찐찌버거') || resp.includes('도르마무') || resp.includes('돌마무') || resp.includes('한상우') || resp.includes('찐쯰버거')) {
 	  bot.sendMessage(chatId, '헬라바보');
     return;
   }
