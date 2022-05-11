@@ -1,11 +1,12 @@
+// process.env.NTBA_FIX_319 = 1
 import TelegramBot from "node-telegram-bot-api";
 import dotenv from "dotenv";
 import { readExcel, writeExcel } from "./excel.js";
-dotenv.config();
+dotenv.config('./env');
 process.env.NTBA_FIX_319 = 1;
 
 const token = process.env.TOKEN_KEY;
-
+console.log(token);
 const bot = new TelegramBot(token, { polling: true });
 
 const foodExcel = 'food.xlsx';
@@ -15,27 +16,26 @@ bot.onText(/\/echo (.+)/, (msg, match) => {
 	const chatId = msg.chat.id;
 	const resp = match[1];
 
-  if(resp.includes('찐찌버거') || resp.includes('도르마무') || resp.includes('돌마무') || resp.includes('한상우') || resp.includes('찐쯰버거')) {
-	  bot.sendMessage(chatId, '헬라바보');
-    return;
-  }
 	bot.sendMessage(chatId, resp);
 });
 
-bot.onText(/\/hungry/, (msg, match) => {
+bot.onText(/\/h(ungry)?/, (msg, match) => {
 	const chatId = msg.chat.id;
 	const jsonList = readExcel(foodExcel);
 
-	const rand = getRandom(0, jsonList.length);
-
-	bot.sendMessage(chatId, jsonList[rand].name);
-	bot.sendMessage(chatId, jsonList[rand].position);
+  if(jsonList.length == 0) {
+	  bot.sendMessage(chatId, 'There is no food list. Please add new food.');
+  } else {
+    const rand = getRandom(0, jsonList.length);
+    bot.sendMessage(chatId, jsonList[rand].name);
+    bot.sendMessage(chatId, jsonList[rand].position);
+  }
 });
 
-bot.onText(/\/addfood (.+)/, (msg, match) => {
+bot.onText(/\/(addfood|af) (.+)/, (msg, match) => {
   
   const chatId = msg.chat.id;
-  console.log(match);
+
   if(!match[1] || typeof match[1] !== 'string') {
 	  bot.sendMessage(chatId, 'please input /addfood {name}&{position}');
     return;
@@ -46,11 +46,21 @@ bot.onText(/\/addfood (.+)/, (msg, match) => {
     return;
   }
 
+  if(food[0] == '' || food[1] == '') {
+    bot.sendMessage(chatId, 'Please enter your name and position.');
+    return;
+  }
+
 	const jsonList = readExcel(foodExcel);
+
+  for(let i = 0; i < jsonList.length; i++) {
+    if(jsonList[i].name == food[0]) {
+      bot.sendMessage(chatId, 'It already exists.');
+      return;
+    }
+  }
   
-  const id = jsonList.length + 1;
   const newJson = {
-    id,
     name: food[0],
     position: food[1]
   };
@@ -67,7 +77,7 @@ bot.onText(/\/addfood (.+)/, (msg, match) => {
 	bot.sendMessage(chatId, jsonList[last].position);
 });
 
-bot.onText(/\/deletefood (.+)/, (msg, match) => {
+bot.onText(/\/(deletefood|df) (.+)/, (msg, match) => {
   
   const chatId = msg.chat.id;
   if(!match[1] || typeof match[1] !== 'string') {
@@ -96,7 +106,7 @@ bot.onText(/\/deletefood (.+)/, (msg, match) => {
   
 });
 
-bot.onText(/\/foodlist/, (msg, match) => {
+bot.onText(/\/(foodlist|fl)/, (msg, match) => {
   const chatId = msg.chat.id;
   
   // send json
@@ -112,8 +122,14 @@ bot.onText(/\/foodlist/, (msg, match) => {
 function getRandom(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
-  const rand = Math.random() * (max - min);
-  return Math.floor(rand) + min;
+  const date = new Date();
+  const milliseconds = date.getMilliseconds();
+
+  let rand1 = Math.floor(Math.random() * 1000);
+  let rand2 = Math.floor(Math.random() * 5000);
+  const rand = (milliseconds + rand1 + rand2) % (max - min) + min;
+
+  return rand;
 }
 
 // bot.on('message', (msg) => {
